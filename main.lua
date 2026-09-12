@@ -15,6 +15,19 @@ local Settings = dofile(plugin_dir .. "settings.lua")
 local Streaks = dofile(plugin_dir .. "streaks.lua")
 local HeatmapModal = dofile(plugin_dir .. "heatmap.lua")
 
+-- Register into KOReader's menu order system
+local function addToMenuOrder(module_path, section, name)
+    local ok, order = pcall(require, module_path)
+    if ok and order and order[section] then
+        for _, v in ipairs(order[section]) do
+            if v == name then return end
+        end
+        table.insert(order[section], name)
+    end
+end
+addToMenuOrder("ui/elements/reader_menu_order", "more_tools", "habitreads")
+addToMenuOrder("ui/elements/filemanager_menu_order", "more_tools", "habitreads")
+
 local HabitReads = WidgetContainer:extend{
     name = "habitreads",
     is_doc_only = false,
@@ -64,6 +77,10 @@ end
 function HabitReads:addToMainMenu(menu_items)
     menu_items.habitreads = {
         text = _("HabitReads"),
+        sorting_hint = "more_tools",
+        sub_item_table_func = function()
+            return self:getSubMenuItems()
+        end,
         sub_item_table = self:getSubMenuItems(),
     }
 end
