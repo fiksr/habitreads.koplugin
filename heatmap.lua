@@ -153,7 +153,7 @@ function HeatmapModal:buildView()
     }
 
     local all_m = Streaks.getMilestoneList()
-    for _, m in ipairs(all_m) do
+    for idx, m in ipairs(all_m) do
         local is_unlocked = (unlocked_achievements[m.id] ~= nil)
         local status_icon = is_unlocked and "✅" or "🔒"
         local row = TextWidget:new{
