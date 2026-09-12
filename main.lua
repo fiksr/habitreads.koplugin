@@ -64,7 +64,6 @@ end
 function HabitReads:addToMainMenu(menu_items)
     menu_items.habitreads = {
         text = _("HabitReads"),
-        sorting_hint = "more_tools",
         sub_item_table = self:getSubMenuItems(),
     }
 end
