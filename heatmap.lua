@@ -18,6 +18,7 @@ local TextWidget = require("ui/widget/textwidget")
 local UIManager = require("ui/uimanager")
 local VerticalGroup = require("ui/widget/verticalgroup")
 local VerticalSpan = require("ui/widget/verticalspan")
+local Widget = require("ui/widget/widget")
 local _ = require("gettext")
 local Screen = Device.screen
 
@@ -105,13 +106,14 @@ function HeatmapModal:buildView()
             local color, border = getColorForPages(p_count)
 
             local cell = FrameContainer:new{
-                width = cell_size,
-                height = cell_size,
-                background = color,
                 bordersize = border,
                 color = Blitbuffer.COLOR_GRAY,
                 padding = 0,
                 margin = 0,
+                Widget:new{
+                    dimen = Geom:new{ w = cell_size, h = cell_size },
+                    background = color,
+                }
             }
             table.insert(col_cells, cell)
             if d < 6 then
@@ -131,15 +133,15 @@ function HeatmapModal:buildView()
         align = "center",
         TextWidget:new{ text = _("Less"), face = Font:getFace("cfont", 13), fgcolor = Blitbuffer.COLOR_DARK_GRAY },
         HorizontalSpan:new{ width = 8 },
-        FrameContainer:new{ width = 12, height = 12, background = Blitbuffer.COLOR_WHITE, bordersize = 1, color = Blitbuffer.COLOR_GRAY },
+        FrameContainer:new{ bordersize = 1, color = Blitbuffer.COLOR_GRAY, Widget:new{ dimen = Geom:new{ w = 12, h = 12 }, background = Blitbuffer.COLOR_WHITE } },
         HorizontalSpan:new{ width = 4 },
-        FrameContainer:new{ width = 12, height = 12, background = Blitbuffer.COLOR_LIGHT_GRAY, bordersize = 0 },
+        FrameContainer:new{ bordersize = 0, Widget:new{ dimen = Geom:new{ w = 12, h = 12 }, background = Blitbuffer.COLOR_LIGHT_GRAY } },
         HorizontalSpan:new{ width = 4 },
-        FrameContainer:new{ width = 12, height = 12, background = Blitbuffer.COLOR_GRAY, bordersize = 0 },
+        FrameContainer:new{ bordersize = 0, Widget:new{ dimen = Geom:new{ w = 12, h = 12 }, background = Blitbuffer.COLOR_GRAY } },
         HorizontalSpan:new{ width = 4 },
-        FrameContainer:new{ width = 12, height = 12, background = Blitbuffer.COLOR_DARK_GRAY, bordersize = 0 },
+        FrameContainer:new{ bordersize = 0, Widget:new{ dimen = Geom:new{ w = 12, h = 12 }, background = Blitbuffer.COLOR_DARK_GRAY } },
         HorizontalSpan:new{ width = 4 },
-        FrameContainer:new{ width = 12, height = 12, background = Blitbuffer.COLOR_BLACK, bordersize = 0 },
+        FrameContainer:new{ bordersize = 0, Widget:new{ dimen = Geom:new{ w = 12, h = 12 }, background = Blitbuffer.COLOR_BLACK } },
         HorizontalSpan:new{ width = 8 },
         TextWidget:new{ text = _("More"), face = Font:getFace("cfont", 13), fgcolor = Blitbuffer.COLOR_DARK_GRAY },
     }
