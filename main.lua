@@ -4,6 +4,7 @@ Tracks daily pages read, updates streaks, and displays the annual contribution h
 --]]--
 
 local Device = require("device")
+local Dispatcher = require("dispatcher")
 local InfoMessage = require("ui/widget/infomessage")
 local UIManager = require("ui/uimanager")
 local WidgetContainer = require("ui/widget/container/widgetcontainer")
@@ -32,6 +33,20 @@ local HabitReads = WidgetContainer:extend{
     name = "habitreads",
     is_doc_only = false,
 }
+
+
+function HabitReads:onDispatcherRegisterActions()
+    Dispatcher:registerAction("habitreads", {
+        category = "none",
+        event = "ShowHabitReads",
+        title = _("HabitReads: Reading Heatmap"),
+        general = true,
+    })
+end
+
+function HabitReads:onShowHabitReads()
+    self:showHeatmap()
+end
 
 function HabitReads:init()
     self.settings = Settings:new()
