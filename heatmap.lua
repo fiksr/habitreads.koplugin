@@ -155,7 +155,7 @@ function HeatmapModal:buildView()
     local all_m = Streaks.getMilestoneList()
     for idx, m in ipairs(all_m) do
         local is_unlocked = (unlocked_achievements[m.id] ~= nil)
-        local status_icon = is_unlocked and ""or ""
+        local status_icon = is_unlocked and "" or ""
         local row = TextWidget:new{
             text = string.format("%s %s — %s", status_icon, m.title, m.desc),
             face = Font:getFace("cfont", 14),
@@ -219,8 +219,7 @@ function HeatmapModal:buildView()
             dimen = Geom:new{ w = screen_w, h = screen_h },
             card,
         },
-    }
-end
+    } end
 
 function HeatmapModal:onClose()
     UIManager:setDirty(nil, "full")

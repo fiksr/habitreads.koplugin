@@ -97,8 +97,7 @@ function HabitReads:addToMainMenu(menu_items)
             return self:getSubMenuItems()
         end,
         sub_item_table = self:getSubMenuItems(),
-    }
-end
+    } end
 
 function HabitReads:getSubMenuItems()
     local cur_streak, best_streak, total_days = self.settings:calculateStreaks()
@@ -135,7 +134,6 @@ function HabitReads:getSubMenuItems()
                 })
             end,
         },
-    }
-end
+    } end
 
 return HabitReads
