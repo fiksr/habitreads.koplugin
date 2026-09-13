@@ -39,7 +39,7 @@ function HabitReads:onDispatcherRegisterActions()
     Dispatcher:registerAction("habitreads", {
         category = "none",
         event = "ShowHabitReads",
-        title = _("HabitReads: Reading Heatmap"),
+        title = _("📊 Reading Heatmap & Streaks"),
         general = true,
     })
 end
@@ -91,7 +91,7 @@ end
 
 function HabitReads:addToMainMenu(menu_items)
     menu_items.habitreads = {
-        text = _("HabitReads"),
+        text = _("📊 HabitReads"),
         sorting_hint = "more_tools",
         sub_item_table_func = function()
             return self:getSubMenuItems()
