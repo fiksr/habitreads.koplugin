@@ -39,7 +39,7 @@ function HabitReads:onDispatcherRegisterActions()
     Dispatcher:registerAction("habitreads", {
         category = "none",
         event = "ShowHabitReads",
-        title = _("📊 Reading Heatmap & Streaks"),
+        title = _("Reading Heatmap & Streaks"),
         general = true,
     })
 end
@@ -82,7 +82,7 @@ function HabitReads:onPageUpdate(pageno)
 
         if #unlocks > 0 then
             UIManager:show(InfoMessage:new{
-                text = string.format(_("🌟 Milestone Unlocked!\n\n%s"), table.concat(unlocks, "\n")),
+                text = string.format(_("Milestone Unlocked!\n\n%s"), table.concat(unlocks, "\n")),
                 timeout = 4,
             })
         end
@@ -91,7 +91,7 @@ end
 
 function HabitReads:addToMainMenu(menu_items)
     menu_items.habitreads = {
-        text = _("📊 HabitReads"),
+        text = _("HabitReads"),
         sorting_hint = "more_tools",
         sub_item_table_func = function()
             return self:getSubMenuItems()
@@ -107,7 +107,7 @@ function HabitReads:getSubMenuItems()
 
     return {
         {
-            text = _("📊 View Annual Heatmap & Badges"),
+            text = _("View Annual Heatmap & Badges"),
             callback = function()
                 local modal = HeatmapModal:new{
                     settings = self.settings,
@@ -116,16 +116,16 @@ function HabitReads:getSubMenuItems()
             end,
         },
         {
-            text = string.format(_("🔥 Current Streak: %d Days (Best: %d)"), cur_streak, best_streak),
+            text = string.format(_("Current Streak: %d Days (Best: %d)"), cur_streak, best_streak),
             enabled = false,
         },
         {
-            text = string.format(_("📖 Read Today: %d pages  •  Total Days: %d"), today_pages, total_days),
+            text = string.format(_("Read Today: %d pages  •  Total Days: %d"), today_pages, total_days),
             enabled = false,
         },
         {
             text_func = function()
-                return string.format(_("🛡️ Streak Freeze Shields: %d available"), self.settings:getFreezeTokens())
+                return string.format(_("️ Streak Freeze Shields: %d available"), self.settings:getFreezeTokens())
             end,
             callback = function()
                 local tokens = self.settings:getFreezeTokens()

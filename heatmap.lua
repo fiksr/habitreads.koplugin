@@ -64,19 +64,19 @@ function HeatmapModal:buildView()
     local stats_row = HorizontalGroup:new{
         align = "center",
         TextWidget:new{
-            text = string.format(_("🔥 Streak: %d Days"), cur_streak),
+            text = string.format(_("Streak: %d Days"), cur_streak),
             face = Font:getFace("cfont", 20),
             bold = true,
         },
         HorizontalSpan:new{ width = 30 },
         TextWidget:new{
-            text = string.format(_("🏆 Best: %d Days"), best_streak),
+            text = string.format(_("Best: %d Days"), best_streak),
             face = Font:getFace("cfont", 20),
             bold = true,
         },
         HorizontalSpan:new{ width = 30 },
         TextWidget:new{
-            text = string.format(_("📅 Total Days: %d"), total_days),
+            text = string.format(_("Total Days: %d"), total_days),
             face = Font:getFace("cfont", 20),
             bold = true,
         },
@@ -155,7 +155,7 @@ function HeatmapModal:buildView()
     local all_m = Streaks.getMilestoneList()
     for idx, m in ipairs(all_m) do
         local is_unlocked = (unlocked_achievements[m.id] ~= nil)
-        local status_icon = is_unlocked and "✅" or "🔒"
+        local status_icon = is_unlocked and ""or ""
         local row = TextWidget:new{
             text = string.format("%s %s — %s", status_icon, m.title, m.desc),
             face = Font:getFace("cfont", 14),
@@ -168,7 +168,7 @@ function HeatmapModal:buildView()
     end
 
     local btn_close = Button:new{
-        text = _("✕ Close"),
+        text = _("Close"),
         callback = function()
             UIManager:close(self)
         end,
@@ -179,7 +179,7 @@ function HeatmapModal:buildView()
     local card_items = {
         align = "center",
         TextWidget:new{
-            text = _("📊 Reading Activity & Contribution Heatmap"),
+            text = _("Reading Activity & Contribution Heatmap"),
             face = Font:getFace("cfont", 22),
             bold = true,
         },

@@ -13,14 +13,14 @@ end
 
 function Settings:get(key, default)
     if not G_reader_settings then return default end
-    local val = G_reader_settings:readSetting("habitreads_" .. key)
+    local val = G_reader_settings:readSetting("habitreads_".. key)
     if val ~= nil then return val end
     return default
 end
 
 function Settings:save(key, val)
     if not G_reader_settings then return end
-    G_reader_settings:saveSetting("habitreads_" .. key, val)
+    G_reader_settings:saveSetting("habitreads_".. key, val)
 end
 
 function Settings:recordPages(count)
