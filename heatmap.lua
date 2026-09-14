@@ -26,6 +26,8 @@ local Streaks = require("streaks")
 
 local HeatmapModal = InputContainer:extend{
     name = "habitreads_heatmap_modal",
+    is_modal = true,
+    covers_fullscreen = true,
     settings = nil,
 }
 
@@ -34,21 +36,30 @@ function HeatmapModal:init()
     local screen_h = Screen:getHeight()
     self.dimen = Geom:new{ x = 0, y = 0, w = screen_w, h = screen_h }
 
+    if Device:hasKeys() then
+        self.key_events.AnyKeyPressed = { { Device.input.group.Any } }
+    end
+    if Device:isTouchDevice() then
+        self.ges_events.Swipe = {
+            GestureRange:new{ ges = "swipe", range = Geom:new{ x = 0, y = 0, w = screen_w, h = screen_h } }
+        }
+    end
+
     self:buildView()
 end
 
 -- Get color level for pages count
 local function getColorForPages(pages)
     if not pages or pages <= 0 then
-        return Blitbuffer.COLOR_WHITE, 1 -- 0: White with border
+        return Blitbuffer.COLOR_WHITE
     elseif pages <= 15 then
-        return Blitbuffer.COLOR_LIGHT_GRAY, 0
+        return Blitbuffer.COLOR_LIGHT_GRAY
     elseif pages <= 35 then
-        return Blitbuffer.COLOR_GRAY, 0
+        return Blitbuffer.COLOR_GRAY
     elseif pages <= 60 then
-        return Blitbuffer.COLOR_DARK_GRAY, 0
+        return Blitbuffer.COLOR_DARK_GRAY
     else
-        return Blitbuffer.COLOR_BLACK, 0
+        return Blitbuffer.COLOR_BLACK
     end
 end
 
@@ -56,7 +67,7 @@ function HeatmapModal:buildView()
     local screen_w = Screen:getWidth()
     local screen_h = Screen:getHeight()
 
-    local content_w = math.min(1050, screen_w - 40)
+    local content_w = math.min(1180, screen_w - 30)
 
     local cur_streak, best_streak, total_days = self.settings:calculateStreaks()
     local pages_map = self.settings:getAllDailyPages()
@@ -65,35 +76,34 @@ function HeatmapModal:buildView()
     local stats_row = HorizontalGroup:new{
         align = "center",
         TextWidget:new{
-            text = string.format(_("Streak: %d Days"), cur_streak),
+            text = string.format(_("Current Streak: %d Days"), cur_streak),
             face = Font:getFace("cfont", 20),
             bold = true,
         },
         HorizontalSpan:new{ width = 30 },
         TextWidget:new{
-            text = string.format(_("Best: %d Days"), best_streak),
+            text = string.format(_("Best Streak: %d Days"), best_streak),
             face = Font:getFace("cfont", 20),
             bold = true,
         },
         HorizontalSpan:new{ width = 30 },
         TextWidget:new{
-            text = string.format(_("Total Days: %d"), total_days),
+            text = string.format(_("Active Days: %d"), total_days),
             face = Font:getFace("cfont", 20),
             bold = true,
         },
     }
 
-    -- 2. Build 52-Week Heatmap Grid
-    -- Square size calculation: cell 14px + 3px gap = 17px per week -> 52 * 17 = 884 px
-    local cell_size = 14
-    local cell_gap = 3
+    -- 2. Build 52-Week Heatmap Grid with crisp, high-contrast borders
     local num_weeks = 52
+    local cell_gap = 2
+    local available_grid_w = content_w - 40
+    local cell_size = math.max(14, math.floor((available_grid_w - (num_weeks * cell_gap)) / num_weeks))
 
     local now = os.time()
     local one_day = 86400
     local day_of_week = tonumber(os.date("%w", now)) -- 0 = Sunday, 1 = Monday, ...
 
-    -- End on today's week
     local week_columns = {}
 
     for w = num_weeks - 1, 0, -1 do
@@ -103,11 +113,12 @@ function HeatmapModal:buildView()
             local cell_time = now - (days_ago * one_day)
             local date_str = os.date("%Y-%m-%d", cell_time)
             local p_count = pages_map[date_str] or 0
-            local color, border = getColorForPages(p_count)
+            local color = getColorForPages(p_count)
 
+            -- Every square has a solid, crisp 1px border for high e-ink visibility
             local cell = FrameContainer:new{
-                bordersize = border,
-                color = Blitbuffer.COLOR_GRAY,
+                bordersize = 1,
+                color = Blitbuffer.COLOR_BLACK,
                 padding = 0,
                 margin = 0,
                 Widget:new{
@@ -128,36 +139,37 @@ function HeatmapModal:buildView()
 
     local grid_widget = HorizontalGroup:new(week_columns)
 
-    -- Heatmap Legend
+    -- Heatmap Legend with crisp 1px borders
+    local legend_size = math.max(14, cell_size)
     local legend_row = HorizontalGroup:new{
         align = "center",
-        TextWidget:new{ text = _("Less"), face = Font:getFace("cfont", 13), fgcolor = Blitbuffer.COLOR_DARK_GRAY },
-        HorizontalSpan:new{ width = 8 },
-        FrameContainer:new{ bordersize = 1, color = Blitbuffer.COLOR_GRAY, Widget:new{ dimen = Geom:new{ w = 12, h = 12 }, background = Blitbuffer.COLOR_WHITE } },
-        HorizontalSpan:new{ width = 4 },
-        FrameContainer:new{ bordersize = 0, Widget:new{ dimen = Geom:new{ w = 12, h = 12 }, background = Blitbuffer.COLOR_LIGHT_GRAY } },
-        HorizontalSpan:new{ width = 4 },
-        FrameContainer:new{ bordersize = 0, Widget:new{ dimen = Geom:new{ w = 12, h = 12 }, background = Blitbuffer.COLOR_GRAY } },
-        HorizontalSpan:new{ width = 4 },
-        FrameContainer:new{ bordersize = 0, Widget:new{ dimen = Geom:new{ w = 12, h = 12 }, background = Blitbuffer.COLOR_DARK_GRAY } },
-        HorizontalSpan:new{ width = 4 },
-        FrameContainer:new{ bordersize = 0, Widget:new{ dimen = Geom:new{ w = 12, h = 12 }, background = Blitbuffer.COLOR_BLACK } },
-        HorizontalSpan:new{ width = 8 },
-        TextWidget:new{ text = _("More"), face = Font:getFace("cfont", 13), fgcolor = Blitbuffer.COLOR_DARK_GRAY },
+        TextWidget:new{ text = _("Less"), face = Font:getFace("cfont", 14), bold = true, fgcolor = Blitbuffer.COLOR_DARK_GRAY },
+        HorizontalSpan:new{ width = 10 },
+        FrameContainer:new{ bordersize = 1, color = Blitbuffer.COLOR_BLACK, padding = 0, Widget:new{ dimen = Geom:new{ w = legend_size, h = legend_size }, background = Blitbuffer.COLOR_WHITE } },
+        HorizontalSpan:new{ width = 6 },
+        FrameContainer:new{ bordersize = 1, color = Blitbuffer.COLOR_BLACK, padding = 0, Widget:new{ dimen = Geom:new{ w = legend_size, h = legend_size }, background = Blitbuffer.COLOR_LIGHT_GRAY } },
+        HorizontalSpan:new{ width = 6 },
+        FrameContainer:new{ bordersize = 1, color = Blitbuffer.COLOR_BLACK, padding = 0, Widget:new{ dimen = Geom:new{ w = legend_size, h = legend_size }, background = Blitbuffer.COLOR_GRAY } },
+        HorizontalSpan:new{ width = 6 },
+        FrameContainer:new{ bordersize = 1, color = Blitbuffer.COLOR_BLACK, padding = 0, Widget:new{ dimen = Geom:new{ w = legend_size, h = legend_size }, background = Blitbuffer.COLOR_DARK_GRAY } },
+        HorizontalSpan:new{ width = 6 },
+        FrameContainer:new{ bordersize = 1, color = Blitbuffer.COLOR_BLACK, padding = 0, Widget:new{ dimen = Geom:new{ w = legend_size, h = legend_size }, background = Blitbuffer.COLOR_BLACK } },
+        HorizontalSpan:new{ width = 10 },
+        TextWidget:new{ text = _("More"), face = Font:getFace("cfont", 14), bold = true, fgcolor = Blitbuffer.COLOR_DARK_GRAY },
     }
 
     -- 3. Milestones Section
     local unlocked_achievements = self.settings:getAchievements()
     local milestone_items = {
         align = "left",
-        TextWidget:new{ text = _("MILESTONES & BADGES"), face = Font:getFace("cfont", 13), bold = true, fgcolor = Blitbuffer.COLOR_DARK_GRAY },
+        TextWidget:new{ text = _("MILESTONES & BADGES"), face = Font:getFace("cfont", 14), bold = true, fgcolor = Blitbuffer.COLOR_BLACK },
         VerticalSpan:new{ width = 8 },
     }
 
     local all_m = Streaks.getMilestoneList()
     for idx, m in ipairs(all_m) do
         local is_unlocked = (unlocked_achievements[m.id] ~= nil)
-        local status_icon = is_unlocked and "" or ""
+        local status_icon = is_unlocked and "[X]" or "[ ]"
         local row = TextWidget:new{
             text = string.format("%s %s — %s", status_icon, m.title, m.desc),
             face = Font:getFace("cfont", 14),
@@ -172,7 +184,7 @@ function HeatmapModal:buildView()
     local btn_close = Button:new{
         text = _("Close"),
         callback = function()
-            UIManager:close(self)
+            UIManager:close(self, "ui")
         end,
         bordersize = 1,
         padding = 10,
@@ -187,17 +199,17 @@ function HeatmapModal:buildView()
         },
         VerticalSpan:new{ width = 12 },
         stats_row,
-        VerticalSpan:new{ width = 20 },
-        LineWidget:new{ background = Blitbuffer.COLOR_GRAY, dimen = Geom:new{ w = content_w - 40, h = 1 } },
+        VerticalSpan:new{ width = 18 },
+        LineWidget:new{ background = Blitbuffer.COLOR_BLACK, dimen = Geom:new{ w = content_w - 40, h = 1 } },
         VerticalSpan:new{ width = 16 },
         grid_widget,
-        VerticalSpan:new{ width = 10 },
+        VerticalSpan:new{ width = 12 },
         legend_row,
-        VerticalSpan:new{ width = 20 },
-        LineWidget:new{ background = Blitbuffer.COLOR_GRAY, dimen = Geom:new{ w = content_w - 40, h = 1 } },
-        VerticalSpan:new{ width = 16 },
+        VerticalSpan:new{ width = 18 },
+        LineWidget:new{ background = Blitbuffer.COLOR_BLACK, dimen = Geom:new{ w = content_w - 40, h = 1 } },
+        VerticalSpan:new{ width = 14 },
         VerticalGroup:new(milestone_items),
-        VerticalSpan:new{ width = 24 },
+        VerticalSpan:new{ width = 20 },
         btn_close,
     }
 
@@ -221,10 +233,21 @@ function HeatmapModal:buildView()
             dimen = Geom:new{ w = screen_w, h = screen_h },
             card,
         },
-    } end
+    }
+end
 
-function HeatmapModal:onClose()
-    UIManager:setDirty(nil, "full")
+function HeatmapModal:onSwipe(arg, ges)
+    UIManager:close(self, "ui")
+    return true
+end
+
+function HeatmapModal:onAnyKeyPressed()
+    UIManager:close(self, "ui")
+    return true
+end
+
+function HeatmapModal:onCloseWidget()
+    UIManager:setDirty(nil, "ui")
 end
 
 return HeatmapModal
