@@ -59,11 +59,16 @@ end
 
 function HabitReads:onReaderReady()
     if self.ui and self.ui.getCurrentPage then
-        self.last_page = self.ui:getCurrentPage()
+        local p = self.ui:getCurrentPage()
+        if type(p) == "number" then
+            self.last_page = p
+        end
     end
 end
 
 function HabitReads:onPageUpdate(pageno)
+    if type(pageno) ~= "number" then return end
+
     if not self.last_page then
         self.last_page = pageno
         return
@@ -124,7 +129,7 @@ function HabitReads:getSubMenuItems()
         },
         {
             text_func = function()
-                return string.format(_("️ Streak Freeze Shields: %d available"), self.settings:getFreezeTokens())
+                return string.format(_("Streak Freeze Shields: %d available"), self.settings:getFreezeTokens())
             end,
             callback = function()
                 local tokens = self.settings:getFreezeTokens()

@@ -117,14 +117,14 @@ function HeatmapModal:buildView()
 
             -- Every square has a solid, crisp 1px border for high e-ink visibility
             local cell = FrameContainer:new{
+                background = color,
                 bordersize = 1,
                 color = Blitbuffer.COLOR_BLACK,
                 padding = 0,
                 margin = 0,
                 Widget:new{
                     dimen = Geom:new{ w = cell_size, h = cell_size },
-                    background = color,
-                }
+                },
             }
             table.insert(col_cells, cell)
             if d < 6 then
@@ -145,15 +145,15 @@ function HeatmapModal:buildView()
         align = "center",
         TextWidget:new{ text = _("Less"), face = Font:getFace("cfont", 14), bold = true, fgcolor = Blitbuffer.COLOR_DARK_GRAY },
         HorizontalSpan:new{ width = 10 },
-        FrameContainer:new{ bordersize = 1, color = Blitbuffer.COLOR_BLACK, padding = 0, Widget:new{ dimen = Geom:new{ w = legend_size, h = legend_size }, background = Blitbuffer.COLOR_WHITE } },
+        FrameContainer:new{ background = Blitbuffer.COLOR_WHITE, bordersize = 1, color = Blitbuffer.COLOR_BLACK, padding = 0, margin = 0, Widget:new{ dimen = Geom:new{ w = legend_size, h = legend_size } } },
         HorizontalSpan:new{ width = 6 },
-        FrameContainer:new{ bordersize = 1, color = Blitbuffer.COLOR_BLACK, padding = 0, Widget:new{ dimen = Geom:new{ w = legend_size, h = legend_size }, background = Blitbuffer.COLOR_LIGHT_GRAY } },
+        FrameContainer:new{ background = Blitbuffer.COLOR_LIGHT_GRAY, bordersize = 1, color = Blitbuffer.COLOR_BLACK, padding = 0, margin = 0, Widget:new{ dimen = Geom:new{ w = legend_size, h = legend_size } } },
         HorizontalSpan:new{ width = 6 },
-        FrameContainer:new{ bordersize = 1, color = Blitbuffer.COLOR_BLACK, padding = 0, Widget:new{ dimen = Geom:new{ w = legend_size, h = legend_size }, background = Blitbuffer.COLOR_GRAY } },
+        FrameContainer:new{ background = Blitbuffer.COLOR_GRAY, bordersize = 1, color = Blitbuffer.COLOR_BLACK, padding = 0, margin = 0, Widget:new{ dimen = Geom:new{ w = legend_size, h = legend_size } } },
         HorizontalSpan:new{ width = 6 },
-        FrameContainer:new{ bordersize = 1, color = Blitbuffer.COLOR_BLACK, padding = 0, Widget:new{ dimen = Geom:new{ w = legend_size, h = legend_size }, background = Blitbuffer.COLOR_DARK_GRAY } },
+        FrameContainer:new{ background = Blitbuffer.COLOR_DARK_GRAY, bordersize = 1, color = Blitbuffer.COLOR_BLACK, padding = 0, margin = 0, Widget:new{ dimen = Geom:new{ w = legend_size, h = legend_size } } },
         HorizontalSpan:new{ width = 6 },
-        FrameContainer:new{ bordersize = 1, color = Blitbuffer.COLOR_BLACK, padding = 0, Widget:new{ dimen = Geom:new{ w = legend_size, h = legend_size }, background = Blitbuffer.COLOR_BLACK } },
+        FrameContainer:new{ background = Blitbuffer.COLOR_BLACK, bordersize = 1, color = Blitbuffer.COLOR_BLACK, padding = 0, margin = 0, Widget:new{ dimen = Geom:new{ w = legend_size, h = legend_size } } },
         HorizontalSpan:new{ width = 10 },
         TextWidget:new{ text = _("More"), face = Font:getFace("cfont", 14), bold = true, fgcolor = Blitbuffer.COLOR_DARK_GRAY },
     }

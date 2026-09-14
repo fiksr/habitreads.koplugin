@@ -12,7 +12,7 @@ local MILESTONES = {
     { id = "night_owl", title = "Night Owl", desc = "Read during the quiet hours between midnight and 4 AM."},
     { id = "early_bird", title = "Early Bird", desc = "Read early in the morning before 7 AM."},
     { id = "marathon", title = "Reading Marathon", desc = "Read 50 or more pages in a single day."},
-    { id = "centurion", title = "️ Centurion", desc = "Read 100 or more pages in a single day."},
+    { id = "centurion", title = "Centurion", desc = "Read 100 or more pages in a single day."},
     { id = "week_streak", title = "7-Day Streak", desc = "Maintained a daily reading streak for 7 consecutive days."},
     { id = "month_streak", title = "30-Day Streak", desc = "A full month of consistent daily reading!"},
 }
@@ -51,7 +51,7 @@ function Streaks.checkActivity(settings, pages_today)
 
     if pages_today >= 100 then
         if settings:unlockAchievement("centurion") then
-            table.insert(new_unlocks, "️ Centurion")
+            table.insert(new_unlocks, "Centurion")
         end
     end
 
